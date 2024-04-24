@@ -1,0 +1,7 @@
+{
+    "baseUrl": "https://intelekt.groupfio.com",
+    "tokenEndpoint": "/bi/api/site/demo/token",
+    "dashboardEndpoint": "/bi/api/site/demo/v5.0/dashboards",
+    "username": "devteam",
+    "password": "BoldBi@2023"
+}
