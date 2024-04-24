@@ -51,4 +51,28 @@ async function getDashboards(token: string) {
     return allDashboards;
 }
 
-export { getAuthToken, getDashboards }; // Export functions for use in other files
+async function getDashboardWidget(token: string, dashboardId: string) {
+  const url = `${baseUrl}${dashboardEndpoint}/${dashboardId}/widgets`;
+  const request = new Request(url, {
+      method: 'GET',
+      headers: {
+          'Authorization': `Bearer ${token}`,
+      }
+  });
+
+  try {
+      const response = await fetch(request);
+
+      if (!response.ok) {
+          throw new Error(`Failed to fetch widgets for dashboard ${dashboardId}. Status: ${response.status} ${response.statusText}`);
+      }
+
+      return await response.json();
+  } catch (error) {
+      console.error('Error fetching dashboard widgets:', error);
+      throw error;
+  }
+}
+
+
+export { getAuthToken, getDashboards, getDashboardWidget };

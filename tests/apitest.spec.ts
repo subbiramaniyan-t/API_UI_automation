@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { getAuthToken, getDashboards } from './helper/APIhelper';
+import { getAuthToken, getDashboards, getDashboardWidget } from './helper/APIhelper';
 import * as fs from 'fs';
 
 const responsesDirectory = 'responses';
@@ -19,7 +19,8 @@ test('get dashboards and validate total count', async ({ context, page }) => {
 
     const allDashboards = results.map(dashboard => ({
       Name: dashboard.Name,
-      EmbedUrl: removeEmbedParameter(dashboard.EmbedUrl)
+      EmbedUrl: removeEmbedParameter(dashboard.EmbedUrl),
+      Id: dashboard.Id
     }));
 
     fs.writeFileSync(`${responsesDirectory}/all_dashboards.json`, JSON.stringify(allDashboards));
@@ -28,8 +29,8 @@ test('get dashboards and validate total count', async ({ context, page }) => {
       Id: dashboard.Id,
       Name: dashboard.Name,
     }));
-    
-    fs.writeFileSync(`${responsesDirectory}/dashboard_names.json`, JSON.stringify(dashboardNames));    
+
+    fs.writeFileSync(`${responsesDirectory}/dashboard_names.json`, JSON.stringify(dashboardNames));
 
     const dashboardUrls = results.map(dashboard => removeEmbedParameter(dashboard.EmbedUrl));
     fs.writeFileSync(`${responsesDirectory}/dashboard_urls.json`, JSON.stringify(dashboardUrls));
@@ -59,13 +60,19 @@ test('open and validate rendering of all dashboards', async ({ context, page }) 
   }
 });
 
+test('get widgets for each dashboard', async ({ context, page }) => {
+  const dashboardNames = JSON.parse(fs.readFileSync(`${responsesDirectory}/dashboard_names.json`, 'utf-8'));
+  const token = await getAuthToken();
+
+  for (const dashboard of dashboardNames) {
+    const widgets = await getDashboardWidget(token, dashboard.Id);
+    fs.writeFileSync(`${responsesDirectory}/${dashboard.Name}_widgets.json`, JSON.stringify(widgets));
+    console.log(`Widgets for ${dashboard.Name} successfully saved.`);
+  }
+});
+
 function removeEmbedParameter(url: string): string {
   return url.split('?')[0];
-}
-
-function getDashboardUrl(index: number) {
-  const dashboardUrls = JSON.parse(fs.readFileSync(`${responsesDirectory}/dashboard_urls.json`, 'utf-8'));
-  return dashboardUrls[index];
 }
 
 async function loginIfNeeded(page) {
