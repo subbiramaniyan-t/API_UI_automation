@@ -1,0 +1,21 @@
+{
+    "baseUrl": "http://localhost:8085",
+    "siteIdentifier": "site1",
+    "username": "admin",
+    "password": "Admin@123",
+    "mid": "/bi/api/site/",
+    "tokenEndpoint": "/token",
+    "endpoints": {
+      "users": {
+        "get": "/v5.0/users",
+        "create": "/v5.0/users",
+        "update": "/v5.0/users/{userId}",
+        "delete": "/v5.0/users/{userId}",
+        "getUserByEmail": "/v5.0/users/{userEmailOrUsername}"
+      },
+      "dashboards": {
+        "get": "/v5.0/dashboards"
+      }
+    }
+  }
+  
